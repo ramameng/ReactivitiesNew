@@ -46,14 +46,29 @@ namespace API
             app.UseReferrerPolicy(opt => opt.NoReferrer());
             app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
             app.UseXfo(opt => opt.Deny());
-            app.UseCsp(opt => opt
+            app.UseCspReportOnly(opt => opt
                 .BlockAllMixedContent()
-                .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com"))
-                .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com", "data:"))
+                .StyleSources(s => s.Self().CustomSources(
+                    "https://fonts.googleapis.com",
+                    "sha256-yEnNXBvOde0J4G+Wl9+nPsCflm0K77HoNWt5jvA5EM8=",
+                    "sha256-iv4u281ryDFvLnNHPRS71LdIH1GQfkYMSMdyLM24i2M="
+                ))
+                .FontSources(s => s.Self().CustomSources(
+                    "https://fonts.gstatic.com", "data:"
+                ))
                 .FormActions(s => s.Self())
                 .FrameAncestors(s => s.Self())
-                .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com"))
-                .ScriptSources(s => s.Self().CustomSources("sha256-1Xd5VbAO++yNbo24/AtILK1tKVB0ixBbThpwpSoR8lk="))
+                .ImageSources(s => s.Self().CustomSources(
+                    "https://res.cloudinary.com",
+                    "https://www.facebook.com",
+                    "https://scontent-cgk1-1.xx.fbcdn.net",
+                    "data:"
+                ))
+                .ScriptSources(s => s.Self().CustomSources(
+                    "sha256-1Xd5VbAO++yNbo24/AtILK1tKVB0ixBbThpwpSoR8lk=",
+                    "https://connect.facebook.net",
+                    "sha256-yEnNXBvOde0J4G+Wl9+nPsCflm0K77HoNWt5jvA5EM8="
+                ))
             );
 
             if (env.IsDevelopment())
@@ -69,7 +84,7 @@ namespace API
                 });
             }
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
