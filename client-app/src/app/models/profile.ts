@@ -15,8 +15,14 @@ export class Profile implements Profile {
     constructor(user: User) {
         this.username = user.username;
         this.displayName = user.displayName;
-        this.image = user.image;
+        this.image = user.image
     }
+}
+
+export interface Photo {
+    id: string;
+    url: string;
+    isMain: boolean;
 }
 
 export interface UserActivity {
@@ -24,10 +30,4 @@ export interface UserActivity {
     title: string;
     category: string;
     date: Date;
-}
-
-export interface Photo {
-    id: string,
-    url: string,
-    isMain: boolean
 }

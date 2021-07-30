@@ -1,10 +1,10 @@
+import { format } from "date-fns";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Activity, ActivityFormValues } from "../models/activity";
-import { format } from 'date-fns';
-import { store } from "./store";
-import { Profile } from "../models/profile";
 import { Pagination, PagingParams } from "../models/pagination";
+import { Profile } from "../models/profile";
+import { store } from "./store";
 
 export default class ActivityStore {
     activityRegistry = new Map<string, Activity>();
@@ -61,13 +61,13 @@ export default class ActivityStore {
 
     get axiosParams() {
         const params = new URLSearchParams();
-        params.append('pageNumber', this.pagingParams.pageNumber.toString());
+        params.append('pageNumber', this.pagingParams.pagenumber.toString());
         params.append('pageSize', this.pagingParams.pageSize.toString());
         this.predicate.forEach((value, key) => {
             if (key === 'startDate') {
-                params.append(key, (value as Date).toISOString())
+                params.append(key, (value as Date).toISOString());
             } else {
-                params.append(key, value)
+                params.append(key, value);
             }
         })
         return params;
@@ -92,11 +92,9 @@ export default class ActivityStore {
         this.setLoadingInitial(true);
         try {
             const result = await agent.Activities.list(this.axiosParams);
-            runInAction(() => {
-                result.data.forEach(activity => {
-                    this.setActivity(activity);
-                });
-            });
+            result.data.forEach(activity => {
+                this.setActivity(activity);
+            })
             this.setPagination(result.pagination);
             this.setLoadingInitial(false);
         } catch (error) {
@@ -114,8 +112,7 @@ export default class ActivityStore {
         if (activity) {
             this.selectedActivity = activity;
             return activity;
-        }
-        else {
+        } else {
             this.setLoadingInitial(true);
             try {
                 activity = await agent.Activities.details(id);
@@ -194,7 +191,6 @@ export default class ActivityStore {
                 this.loading = false;
             })
         } catch (error) {
-            console.log(error);
             runInAction(() => {
                 this.loading = false;
             })
@@ -211,18 +207,19 @@ export default class ActivityStore {
                     this.selectedActivity.attendees =
                         this.selectedActivity.attendees?.filter(a => a.username !== user?.username);
                     this.selectedActivity.isGoing = false;
-                }
-                else {
+                } else {
                     const attendee = new Profile(user!);
                     this.selectedActivity?.attendees?.push(attendee);
                     this.selectedActivity!.isGoing = true;
                 }
-                this.activityRegistry.set(this.selectedActivity!.id, this.selectedActivity!)
+                this.activityRegistry.set(this.selectedActivity!.id, this.selectedActivity!);
             })
         } catch (error) {
-            console.log(error)
+            console.log(error);
         } finally {
-            runInAction(() => this.loading = false);
+            runInAction(() => {
+                this.loading = false;
+            })
         }
     }
 

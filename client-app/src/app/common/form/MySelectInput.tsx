@@ -1,6 +1,6 @@
-import { useField } from 'formik';
-import React from 'react';
-import { Form, Label, Select } from 'semantic-ui-react';
+import { useField } from "formik";
+import React from "react";
+import { Form, Label, Select } from "semantic-ui-react";
 
 interface Props {
     placeholder: string;
@@ -14,11 +14,11 @@ export default function MySelectInput(props: Props) {
     return (
         <Form.Field error={meta.touched && !!meta.error}>
             <label>{props.label}</label>
-            <Select 
+            <Select
                 clearable
                 options={props.options}
                 value={field.value || null}
-                onChange={(e,d) => helpers.setValue(d.value)}
+                onChange={(e, d) => helpers.setValue(d.value)}
                 onBlur={() => helpers.setTouched(true)}
                 placeholder={props.placeholder}
             />

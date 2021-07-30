@@ -21,7 +21,7 @@ export default class ProfileStore {
             () => this.activeTab,
             activeTab => {
                 if (activeTab === 3 || activeTab === 4) {
-                    const predicate = activeTab === 3 ? 'followers' : 'following';
+                    const predicate = activeTab === 3 ? 'followers' : 'following'
                     this.loadFollowings(predicate);
                 } else {
                     this.followings = [];
@@ -38,6 +38,7 @@ export default class ProfileStore {
         if (store.userStore.user && this.profile) {
             return store.userStore.user.username === this.profile.username;
         }
+
         return false;
     }
 
@@ -90,8 +91,8 @@ export default class ProfileStore {
                 }
             })
         } catch (error) {
-            runInAction(() => this.loading = false);
             console.log(error);
+            runInAction(() => this.loading = false);
         }
     }
 
@@ -102,32 +103,25 @@ export default class ProfileStore {
             runInAction(() => {
                 if (this.profile) {
                     this.profile.photos = this.profile.photos?.filter(p => p.id !== photo.id);
-                    this.loading = false;
+                    this.loading = false
                 }
-            })
-        } catch (error) {
-            console.log(error);
-            runInAction(() => {
-                this.loading = false;
-            })
-        }
-    }
-
-    updateProfile = async (profile: Partial<Profile>) => {
-        this.loading = true;
-        try {
-            await agent.Profiles.updateProfile(profile);
-            runInAction(() => {
-                if (profile.displayName && profile.displayName !==
-                    store.userStore.user?.displayName) {
-                    store.userStore.setDisplayName(profile.displayName);
-                }
-                this.profile = { ...this.profile, ...profile as Profile };
-                this.loading = false;
             })
         } catch (error) {
             console.log(error);
             runInAction(() => this.loading = false);
+        }
+    }
+
+    updateProfile = async (profile: Partial<Profile>) => {
+        try {
+            await agent.Profiles.update(profile);
+            runInAction(() => {
+                if (profile.displayName && profile.displayName !== store.userStore.user?.displayName)
+                    store.userStore.setDisplayName(profile.displayName);
+                this.profile = { ...this.profile, ...profile as Profile };
+            })
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -172,10 +166,10 @@ export default class ProfileStore {
         }
     }
 
-    loadUserActivities = async (username: string, predicate?: string) => {
+    loadUserActivities = async (predicate?: string) => {
         this.loadingActivities = true;
         try {
-            const activities = await agent.Profiles.listActivities(username, predicate!);
+            const activities = await agent.Profiles.userActivities(this.profile!.username, predicate!);
             runInAction(() => {
                 this.userActivities = activities;
                 this.loadingActivities = false;

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Cropper } from 'react-cropper';
+import React from "react";
+import { Cropper } from "react-cropper";
 import 'cropperjs/dist/cropper.css';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
     setCropper: (cropper: Cropper) => void;
 }
 
-export default function PhotoWidgetCropper({imagePreview, setCropper}: Props) {
+export default function PhotoWidgetCropper({ imagePreview, setCropper }: Props) {
     return (
         <Cropper
             src={imagePreview}

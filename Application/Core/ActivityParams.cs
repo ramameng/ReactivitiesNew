@@ -1,7 +1,6 @@
 using System;
-using Application.Core;
 
-namespace Application.Activities
+namespace Application.Core
 {
     public class ActivityParams : PagingParams
     {

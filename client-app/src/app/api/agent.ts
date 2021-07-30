@@ -1,11 +1,11 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { toast } from 'react-toastify';
-import { history } from '../..';
-import { Activity, ActivityFormValues } from '../models/activity';
-import { PaginatedResult } from '../models/pagination';
-import { Profile, UserActivity } from '../models/profile';
-import { User, UserFormValues } from '../models/user';
-import { store } from '../stores/store';
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { toast } from "react-toastify";
+import { history } from "../..";
+import { Activity, ActivityFormValues } from "../models/activity";
+import { PaginatedResult } from "../models/pagination";
+import { Photo, Profile, UserActivity } from "../models/profile";
+import { User, UserFormValues } from "../models/user";
+import { store } from "../stores/store";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -17,17 +17,17 @@ axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 axios.interceptors.request.use(config => {
     const token = store.commonStore.token;
-    if (token) config.headers.Authorization = `Bearer ${token}`
 
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 })
 
 axios.interceptors.response.use(async response => {
-    if(process.env.NODE_ENV === 'development') await sleep(1000);
+    if (process.env.NODE_ENV === 'development') await sleep(1000);
     const pagination = response.headers['pagination'];
-    if(pagination) {
+    if (pagination) {
         response.data = new PaginatedResult(response.data, JSON.parse(pagination));
-        return response as AxiosResponse<PaginatedResult<any>>
+        return response as AxiosResponse<PaginatedResult<any>>;
     }
     return response;
 }, (error: AxiosError) => {
@@ -38,13 +38,13 @@ axios.interceptors.response.use(async response => {
                 toast.error(data);
             }
             if (config.method === 'get' && data.errors.hasOwnProperty('id')) {
-                history.push('/not-found');
+                history.push('not-found');
             }
             if (data.errors) {
                 const modalStateErrors = [];
                 for (const key in data.errors) {
                     if (data.errors[key]) {
-                        modalStateErrors.push(data.errors[key])
+                        modalStateErrors.push(data.errors[key]);
                     }
                 }
                 throw modalStateErrors.flat();
@@ -74,19 +74,19 @@ const requests = {
 }
 
 const Activities = {
-    list: (params: URLSearchParams) => axios.get<PaginatedResult<Activity[]>>('/activities', {params})
-        .then(responseBody),
+    list: (params: URLSearchParams) => axios.get<PaginatedResult<Activity[]>>('/activities', { params }).then(responseBody),
     details: (id: string) => requests.get<Activity>(`/activities/${id}`),
-    create: (activity: ActivityFormValues) => requests.post<void>('activities/', activity),
+    create: (activity: ActivityFormValues) => requests.post<void>(`/activities`, activity),
     update: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),
     delete: (id: string) => requests.del<void>(`/activities/${id}`),
-    attend: (id: string) => requests.post<void>(`/activities/${id}/attend`, {}),
+    attend: (id: string) => requests.post<void>(`/activities/${id}/attend`, {})
 }
 
 const Account = {
-    currenct: () => requests.get<User>('/account'),
+    current: () => requests.get<User>('/account'),
     login: (user: UserFormValues) => requests.post<User>('/account/login', user),
-    register: (user: UserFormValues) => requests.post<User>('/account/register', user)
+    register: (user: UserFormValues) => requests.post<User>('/account/register', user),
+    fbLogin: (accessToken: string) => requests.post<User>(`/account.fbLogin?accessToken=${accessToken}`, {})
 }
 
 const Profiles = {
@@ -94,17 +94,17 @@ const Profiles = {
     uploadPhoto: (file: Blob) => {
         let formData = new FormData();
         formData.append('File', file);
-        return axios.post('photos', formData, {
+        return axios.post<Photo>('photos', formData, {
             headers: { 'Content-type': 'multipart/form-data' }
         })
     },
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
     deletePhoto: (id: string) => requests.del(`/photos/${id}`),
-    updateProfile: (profile: Partial<Profile>) => requests.put(`/profiles`, profile),
+    update: (profile: Partial<Profile>) => requests.put('/profiles', profile),
     updateFollowing: (username: string) => requests.post(`/follow/${username}`, {}),
     listFollowings: (username: string, predicate: string) =>
         requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`),
-    listActivities: (username: string, predicate: string) =>
+    userActivities: (username: string, predicate: string) =>
         requests.get<UserActivity[]>(`/profiles/${username}/activities?predicate=${predicate}`)
 }
 

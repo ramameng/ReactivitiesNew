@@ -26,7 +26,7 @@ export default class CommentStore {
             this.hubConnection.on('LoadComments', (comments: ChatComment[]) => {
                 runInAction(() => {
                     comments.forEach(comment => {
-                        comment.createdAt = new Date(comment.createdAt);
+                        comment.createdAt = new Date(comment.createdAt + 'Z');
                     })
                     this.comments = comments;
                 });
@@ -38,7 +38,7 @@ export default class CommentStore {
                     this.comments.unshift(comment);
                 });
             })
-        }       
+        }
     }
 
     stopHubConnection = () => {
@@ -52,7 +52,6 @@ export default class CommentStore {
 
     addComment = async (values: any) => {
         values.activityId = store.activityStore.selectedActivity?.id;
-
         try {
             await this.hubConnection?.invoke('SendComment', values);
         } catch (error) {

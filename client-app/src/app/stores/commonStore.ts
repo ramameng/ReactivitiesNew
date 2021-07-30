@@ -1,5 +1,5 @@
 import { makeAutoObservable, reaction } from "mobx";
-import { ServerError } from "../models/serverErrors";
+import { ServerError } from "../models/serverError";
 
 export default class CommonStore {
     error: ServerError | null = null;
@@ -13,9 +13,9 @@ export default class CommonStore {
             () => this.token,
             token => {
                 if (token) {
-                    window.localStorage.setItem('jwt', token)
+                    window.localStorage.setItem('jwt', token);
                 } else {
-                    window.localStorage.removeItem('jwt')
+                    window.localStorage.removeItem('jwt');
                 }
             }
         )
@@ -29,7 +29,7 @@ export default class CommonStore {
         this.token = token;
     }
 
-    setAppLoaded = () => {
+    sepAppLoaded = () => {
         this.appLoaded = true;
     }
 }

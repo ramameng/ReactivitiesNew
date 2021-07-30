@@ -1,9 +1,9 @@
+import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react'
 import { Link } from 'react-router-dom';
 import { Button, Header, Item, Segment, Image, Label } from 'semantic-ui-react'
 import { Activity } from "../../../app/models/activity";
-import { format } from 'date-fns';
 import { useStore } from '../../../app/stores/store';
 
 const activityImageStyle = {
@@ -23,15 +23,15 @@ interface Props {
     activity: Activity
 }
 
-export default observer(function ActivityDetaledHeader({ activity }: Props) {
+export default observer(function ActivityDetailedHeader({ activity }: Props) {
     const { activityStore: { updateAttendance, loading, cancelActivityToggle } } = useStore();
     return (
         <Segment.Group>
             <Segment basic attached='top' style={{ padding: '0' }}>
-                {activity.isCancelled &&
+                {activity.isCancelled && (
                     <Label style={{ position: 'absolute', zIndex: 1000, left: -14, top: 20 }}
-                        ribbon color='red' content='Cancelled' />
-                }
+                        ribon color='red' content='Cancelled' />
+                )}
                 <Image src={`/assets/categoryImages/${activity.category}.jpg`} fluid style={activityImageStyle} />
                 <Segment style={activityImageTextStyle} basic>
                     <Item.Group>
@@ -61,7 +61,6 @@ export default observer(function ActivityDetaledHeader({ activity }: Props) {
                             content={activity.isCancelled ? 'Re-activate Activity' : 'Cancel Activity'}
                             onClick={cancelActivityToggle}
                             loading={loading}
-
                         />
                         <Button as={Link}
                             disabled={activity.isCancelled}
@@ -72,10 +71,10 @@ export default observer(function ActivityDetaledHeader({ activity }: Props) {
                         </Button>
                     </>
                 ) : activity.isGoing ? (
-                    <Button loading={loading} onClick={updateAttendance}>Cancel attendance</Button>
+                    <Button onClick={updateAttendance} loading={loading}>Cancel attendance</Button>
                 ) : (
-                    <Button disabled={activity.isCancelled} 
-                        loading={loading} onClick={updateAttendance} color='teal'>
+                    <Button disabled={activity.isCancelled}
+                        onClick={updateAttendance} loading={loading} color='teal'>
                         Join Activity
                     </Button>
                 )}

@@ -1,15 +1,15 @@
-import { Redirect, Route, RouteComponentProps } from "react-router";
-import { RouteProps } from "react-router-dom";
+import React from "react";
+import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router";
 import { useStore } from "../stores/store";
 
 interface Props extends RouteProps {
     component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
 }
 
-export default function PrivateRoute({component: Component, ...rest}: Props) {
-    const {userStore: {isLoggedIn}} = useStore();
+export default function PrivateRoute({ component: Component, ...rest }: Props) {
+    const { userStore: { isLoggedIn } } = useStore();
     return (
-        <Route 
+        <Route
             {...rest}
             render={(props) => isLoggedIn ? <Component {...props} /> : <Redirect to='/' />}
         />
